@@ -32,7 +32,8 @@ if (typeof document !== 'undefined') {
 }
 
 type Word = {text: string; accent?: boolean};
-type Caption = {from: number; to: number; lines: Word[][]};
+// maxSize/minChars let a caption go bigger than the default auto-sizing allows.
+type Caption = {from: number; to: number; lines: Word[][]; maxSize?: number; minChars?: number};
 
 // Plain lines animate word by word; accent lines animate as one red-highlighted block.
 const w = (s: string, accent = false): Word[] =>
@@ -53,7 +54,9 @@ const CAPTIONS: Caption[] = [
 	{
 		from: 23.2,
 		to: 28.4,
-		lines: [w('ONLY AT'), w('DSU FALL 2026!', true)],
+		lines: [w('ONLY AT'), w('DSU', true), w('FALL', true), w('2026!', true)],
+		maxSize: 270,
+		minChars: 5,
 	},
 ];
 
@@ -124,7 +127,7 @@ const CaptionCard: React.FC<{caption: Caption; duration: number}> = ({caption, d
 			>
 				{caption.lines.map((line, li) => {
 					const chars = line.map((x) => x.text).join(' ').length;
-					const size = Math.min(150, Math.floor(1400 / Math.max(chars, 8)));
+					const size = Math.min(caption.maxSize ?? 150, Math.floor(1400 / Math.max(chars, caption.minChars ?? 8)));
 					return (
 						<div key={li} style={{display: 'flex', justifyContent: 'center', margin: '-0.02em 0'}}>
 							{line.map((word, wi) => (
