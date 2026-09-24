@@ -1,0 +1,22 @@
+{
+  "name": "poppy-war-animation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Remotion animation celebrating R.F. Kuang's The Poppy War trilogy",
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render PoppyWar out/poppy-war.mp4",
+    "still": "remotion still PoppyWar out/poppy-war.png --frame=60"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.527",
+    "@remotion/google-fonts": "4.0.527",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.527"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.0",
+    "typescript": "5.8.3"
+  }
+}
