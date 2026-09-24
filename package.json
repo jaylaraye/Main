@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "remotion studio",
     "render": "remotion render PoppyWar out/poppy-war.mp4",
+    "render:netflix": "remotion render NetflixHouse out/netflix-house-promo.mp4",
     "still": "remotion still PoppyWar out/poppy-war.png --frame=60"
   },
   "dependencies": {
