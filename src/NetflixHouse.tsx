@@ -178,7 +178,9 @@ const CaptionCard: React.FC<{caption: Caption; duration: number}> = ({caption, d
 export const NetflixHouse: React.FC = () => {
 	return (
 		<AbsoluteFill style={{backgroundColor: 'black'}}>
-			<OffthreadVideo src={staticFile('netflix-house-promo.mp4')} />
+			{/* Source reel after a light denoise + sharpen + color pass:
+			    ffmpeg -i netflix-house-promo.mp4 -vf "hqdn3d=1.5:1.5:3:3,cas=0.75,unsharp=5:5:0.75:5:5:0.0,eq=contrast=1.05:saturation=1.12" */}
+			<OffthreadVideo src={staticFile('netflix-house-promo-enhanced.mp4')} />
 			{CAPTIONS.map((c, i) => {
 				const from = Math.round(c.from * FPS);
 				const duration = Math.round((c.to - c.from) * FPS);
