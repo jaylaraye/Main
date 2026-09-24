@@ -1,6 +1,7 @@
 import {
 	AbsoluteFill,
 	Easing,
+	Img,
 	interpolate,
 	OffthreadVideo,
 	Sequence,
@@ -32,8 +33,16 @@ if (typeof document !== 'undefined') {
 }
 
 type Word = {text: string; accent?: boolean};
-// maxSize/minChars let a caption go bigger than the default auto-sizing allows.
-type Caption = {from: number; to: number; lines: Word[][]; maxSize?: number; minChars?: number};
+// maxSize/minChars let a caption go bigger than the default auto-sizing allows;
+// logo is an image in public/ shown under the text lines.
+type Caption = {
+	from: number;
+	to: number;
+	lines: Word[][];
+	maxSize?: number;
+	minChars?: number;
+	logo?: string;
+};
 
 // Plain lines animate word by word; accent lines animate as one red-highlighted block.
 const w = (s: string, accent = false): Word[] =>
@@ -54,9 +63,9 @@ const CAPTIONS: Caption[] = [
 	{
 		from: 23.2,
 		to: 28.4,
-		lines: [w('ONLY AT'), w('DSU', true), w('FALL', true), w('2026!', true)],
-		maxSize: 270,
-		minChars: 5,
+		lines: [w('ONLY AT')],
+		maxSize: 190,
+		logo: 'dsu-fall-logo.png',
 	},
 ];
 
@@ -98,6 +107,30 @@ const AnimatedWord: React.FC<{word: Word; index: number; duration: number; size:
 	);
 };
 
+const AnimatedLogo: React.FC<{src: string; index: number; duration: number}> = ({src, index, duration}) => {
+	const frame = useCurrentFrame();
+	const {fps} = useVideoConfig();
+	const enter = spring({frame: frame - index * STAGGER - 4, fps, config: {damping: 12, stiffness: 110}});
+	const exit = interpolate(frame, [duration - EXIT, duration], [0, 1], {
+		extrapolateLeft: 'clamp',
+		extrapolateRight: 'clamp',
+		easing: Easing.in(Easing.cubic),
+	});
+
+	return (
+		<Img
+			src={staticFile(src)}
+			style={{
+				width: 820,
+				marginTop: 40,
+				transform: `translateY(${(1 - enter) * 80 - exit * 80}px) scale(${0.8 + 0.2 * enter})`,
+				opacity: Math.min(enter * 1.5, 1 - exit),
+				filter: 'drop-shadow(0 6px 28px rgba(0,0,0,0.7)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
+			}}
+		/>
+	);
+};
+
 const CaptionCard: React.FC<{caption: Caption; duration: number}> = ({caption, duration}) => {
 	const frame = useCurrentFrame();
 	const scrim = interpolate(frame, [0, 10, duration - EXIT, duration], [0, 1, 1, 0], {
@@ -136,6 +169,7 @@ const CaptionCard: React.FC<{caption: Caption; duration: number}> = ({caption, d
 						</div>
 					);
 				})}
+				{caption.logo ? <AnimatedLogo src={caption.logo} index={index} duration={duration} /> : null}
 			</div>
 		</AbsoluteFill>
 	);
